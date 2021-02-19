@@ -3,6 +3,7 @@ package imagegallerysearch.search.model;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import lombok.Data;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 
 @Data
 @Entity
