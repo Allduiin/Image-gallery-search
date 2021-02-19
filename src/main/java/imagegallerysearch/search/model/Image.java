@@ -8,6 +8,6 @@ import lombok.Data;
 @Entity
 public class Image {
     @Id
-    String id;
-    String link;
+    private String id;
+    private String link;
 }
