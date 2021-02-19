@@ -9,5 +9,9 @@ import lombok.Data;
 public class Image {
     @Id
     private String id;
-    private String link;
+    private String author;
+    private String camera;
+    private String tags;
+    private String croppedPicture;
+    private String fullPicture;
 }
