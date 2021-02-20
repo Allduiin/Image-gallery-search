@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PictureMapper {
-    public Image ImageResponseDtoToImage(ImageResponseDto imageResponseDto) {
+    public Image imageResponseDtoToImage(ImageResponseDto imageResponseDto) {
         Image image = new Image();
         image.setId(imageResponseDto.getId());
         image.setAuthor(imageResponseDto.getAuthor());

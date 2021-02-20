@@ -17,21 +17,24 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
+
 public class InjectDataController {
     private static final String API_KEY = "23567b218376f79d9415";
     private final ImageService imageService;
     private final AuthorisationService authorisationService;
     private final PictureMapper pictureMapper;
 
-    public boolean injectDataToDb() {
+    @Scheduled(fixedRate = 3600000L)
+    public void injectDataToDb() {
         String token = authorisationService.authorize(API_KEY);
         try {
             URL url = new URL("http://interview.agileengine.com/images");
-            String jsonString = createConnectionAndTakeJSONString(token, url);
+            String jsonString = createConnectionAndTakeJsonString(token, url);
             Pictures pictures;
             try {
                 pictures = new ObjectMapper().readValue(jsonString, Pictures.class);
@@ -41,7 +44,7 @@ public class InjectDataController {
             addAllPictures(pictures, token);
             while (pictures.getHasMore()) {
                 url = new URL("http://interview.agileengine.com/images?page=" + (pictures.getPage() + 1L));
-                jsonString = createConnectionAndTakeJSONString(token,url);
+                jsonString = createConnectionAndTakeJsonString(token,url);
                 try {
                     pictures = new ObjectMapper().readValue(jsonString, Pictures.class);
                 } catch (JsonProcessingException e) {
@@ -52,14 +55,13 @@ public class InjectDataController {
         } catch (IOException e) {
             throw new RuntimeException("Getting images connection problem", e);
         }
-        return false;
     }
 
     private Boolean addAllPictures(Pictures pictures, String token) {
         Arrays.stream(pictures.getPictures())
                 .forEach(p -> imageService
                         .save(pictureMapper
-                                .ImageResponseDtoToImage(getFullPictureById(p.getId(), token))));
+                                .imageResponseDtoToImage(getFullPictureById(p.getId(), token))));
         return true;
     }
 
@@ -67,7 +69,7 @@ public class InjectDataController {
         ImageResponseDto imageResponseDto;
         try {
             URL url = new URL("http://interview.agileengine.com/images/" + id);
-            String jsonString = createConnectionAndTakeJSONString(token, url);
+            String jsonString = createConnectionAndTakeJsonString(token, url);
             try {
                 imageResponseDto = new ObjectMapper().readValue(jsonString, ImageResponseDto.class);
             } catch (JsonProcessingException e) {
@@ -80,7 +82,7 @@ public class InjectDataController {
         return imageResponseDto;
     }
 
-    private String createConnectionAndTakeJSONString(String token, URL url) throws IOException {
+    private String createConnectionAndTakeJsonString(String token, URL url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.setRequestProperty("Authorization", "Bearer " + token);
