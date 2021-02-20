@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthorizationServiceImpl implements AuthorisationService {
-    Token token;
 
     public String authorize(String apiKey) {
         String jsonString;
@@ -45,6 +44,7 @@ public class AuthorizationServiceImpl implements AuthorisationService {
         } catch (IOException e) {
             throw new AuthorizationException("Problem at connection", e);
         }
+        Token token;
         try {
             token = new ObjectMapper().readValue(jsonString, Token.class);
         } catch (JsonProcessingException e) {
