@@ -17,32 +17,36 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthorizationServiceImpl implements AuthorisationService {
-    private final static String API_KEY = "23567b218376f79d9415";
+    Token token;
 
-    public String authorize() throws IOException {
-        URL url = new URL("http://interview.agileengine.com/auth");
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setDoOutput(true);
-        connection.setRequestProperty("Content-Type", "application/json");
-        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-        String reqBody = "{\"apiKey\":\"" + API_KEY + "\"}";
-        writer.write(reqBody);
-        writer.flush();
-        writer.close();
-        connection.connect();
-        if (connection.getResponseCode() != 200) {
-            throw new AuthorizationException("Incorrect Http status response");
-        }
-        Token token = new Token(connection.getInputStream());
-        if (!token.getAuth()) {
-            throw new AuthorizationException("false authorization bad Api key");
+    public String authorize(String apiKey) {
+        try {
+            URL url = new URL("http://interview.agileengine.com/auth");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/json");
+            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+            String reqBody = "{\"apiKey\":\"" + apiKey + "\"}";
+            writer.write(reqBody);
+            writer.flush();
+            writer.close();
+            connection.connect();
+            if (connection.getResponseCode() != 200) {
+                throw new AuthorizationException("Incorrect Http status response");
+            }
+            token = new Token(connection.getInputStream());
+            if (!token.getAuth()) {
+                throw new AuthorizationException("false authorization bad Api key");
+            }
+        } catch (IOException e) {
+            throw new AuthorizationException("Problem at connection", e);
         }
         return token.getToken();
     }
 
     @Data
-    private class Token {
+    private static class Token {
         private Boolean auth;
         private String token;
 
