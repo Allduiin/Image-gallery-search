@@ -46,11 +46,13 @@ public class AuthorizationServiceImpl implements AuthorisationService {
         private Boolean auth;
         private String token;
 
-        private Token(InputStream inputStream) throws IOException {
+        private Token(InputStream inputStream)  {
             String input;
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
                 input = reader.lines().collect(Collectors.joining(System.lineSeparator()));
+            } catch (IOException e) {
+                throw new AuthorizationException("Problem at getting response from connection", e);
             }
             input = input.substring(1, input.length() - 1).replaceAll("\"","");
             String[] params = input.split(",");

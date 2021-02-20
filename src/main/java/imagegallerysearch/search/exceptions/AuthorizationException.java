@@ -5,7 +5,7 @@ public class AuthorizationException extends RuntimeException {
         super(message);
     }
 
-    public AuthorizationException(String message, RuntimeException e) {
+    public AuthorizationException(String message, Exception e) {
         super(message, e);
     }
 }
