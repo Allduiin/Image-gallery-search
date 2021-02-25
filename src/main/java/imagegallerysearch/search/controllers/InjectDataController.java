@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import imagegallerysearch.search.exceptions.AuthorizationException;
 import imagegallerysearch.search.mapper.PictureMapper;
 import imagegallerysearch.search.model.ImageResponseDto;
-import imagegallerysearch.search.service.AuthorisationService;
+import imagegallerysearch.search.authorization.AuthorizationService;
 import imagegallerysearch.search.service.ImageService;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,12 +26,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class InjectDataController {
     private static final String API_KEY = "23567b218376f79d9415";
     private final ImageService imageService;
-    private final AuthorisationService authorisationService;
+    private final AuthorizationService authorizationService;
     private final PictureMapper pictureMapper;
 
     @Scheduled(fixedRate = 3600000L)
     public void injectDataToDb() {
-        String token = authorisationService.authorize(API_KEY);
+        String token = authorizationService.authorize(API_KEY);
         try {
             URL url = new URL("http://interview.agileengine.com/images");
             String jsonString = createConnectionAndTakeJsonString(token, url);

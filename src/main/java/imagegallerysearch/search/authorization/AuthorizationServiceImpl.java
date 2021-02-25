@@ -1,9 +1,8 @@
-package imagegallerysearch.search.service.impl;
+package imagegallerysearch.search.authorization;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import imagegallerysearch.search.exceptions.AuthorizationException;
-import imagegallerysearch.search.service.AuthorisationService;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,7 +15,7 @@ import lombok.Data;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthorizationServiceImpl implements AuthorisationService {
+public class AuthorizationServiceImpl implements AuthorizationService {
 
     public String authorize(String apiKey) {
         String jsonString;
